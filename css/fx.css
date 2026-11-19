@@ -1,0 +1,77 @@
+/* =====================================================================
+   FX layer: pixel wipe, highlighter sweep, stepped counters,
+   live bracket connectors. Loaded after style.css and bracket.css.
+   ===================================================================== */
+
+/* ---------- Pixel-wipe page transition ---------- */
+.px-wipe {
+  position: fixed; inset: 0; z-index: 2000;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--px));
+  grid-auto-rows: var(--px);
+  overflow: hidden;
+  pointer-events: none;
+}
+.px-wipe[hidden] { display: none; }
+.px-wipe.is-covered { pointer-events: auto; } /* swallow clicks mid-wipe */
+.px-cell {
+  background: var(--plum);
+  opacity: 0; transform: scale(0.4);
+  /* steps() keeps the pop chunky and pixel-like rather than smooth */
+  transition: opacity 0.16s steps(2, end), transform 0.16s steps(3, end);
+  transition-delay: var(--px-d, 0ms);
+}
+.px-cell.is-lav { background: var(--primary); }
+.px-cell.is-gold { background: var(--accent); }
+.px-wipe.is-covered .px-cell { opacity: 1; transform: none; }
+
+/* ---------- Highlighter sweep ---------- */
+mark.hl {
+  color: inherit; background-color: transparent;
+  padding: 0 0.12em; margin: 0 -0.04em;
+  border-radius: 2px;
+  background-image: linear-gradient(transparent 58%, rgba(247, 215, 116, 0.75) 58%, rgba(247, 215, 116, 0.75) 92%, transparent 92%);
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  transition: background-size 0.7s var(--ease);
+  transition-delay: var(--sweep-delay, 0s);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+mark.hl.is-in { background-size: 100% 100%; }
+/* On dark heroes the text stays gold; the band is a soft lavender glow under it. */
+.page-hero mark.hl, .hero-band mark.hl {
+  background-image: linear-gradient(transparent 62%, rgba(164, 137, 184, 0.5) 62%, rgba(164, 137, 184, 0.5) 94%, transparent 94%);
+}
+mark.hl.accent { color: var(--accent); }
+mark.hl .w { color: inherit; }
+
+/* ---------- Stepped count-up ---------- */
+.stat-value { transition: color 0.12s steps(1, end); }
+.stat.is-counting .stat-value { color: var(--primary-strong); }
+.stat.is-counting .stat-icon { animation: stat-blink 0.24s steps(2, end) infinite; }
+@keyframes stat-blink { 50% { filter: brightness(1.15) saturate(1.2); } }
+
+/* ---------- Live bracket connectors ----------
+   The line leading into the next playable match "marches" toward it,
+   so the eye finds the match to score next. */
+.m-slot.feeds-in:has(> .match.status-ready)::before {
+  border-top-width: 0;
+  height: var(--line-w);
+  background: repeating-linear-gradient(90deg, var(--line-on) 0 6px, transparent 6px 10px);
+  background-size: 20px 100%;
+  animation: line-march 0.7s linear infinite;
+}
+@keyframes line-march { to { background-position: 20px 0; } }
+/* A freshly decided line draws in pixel steps. */
+.m-slot.just-decided::after { animation: line-draw 0.5s steps(6, end) both; }
+
+/* ---------- Snappier UI timing ---------- */
+:root { --transition: 0.22s var(--ease); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .px-wipe { display: none; }
+  mark.hl { background-size: 100% 100%; transition: none; }
+  .stat.is-counting .stat-icon { animation: none; }
+  .m-slot.feeds-in:has(> .match.status-ready)::before { animation: none; }
+}

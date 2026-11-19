@@ -1,0 +1,591 @@
+/* =====================================================================
+   Pixel theme — app-wide (class "px-ui" on <html>).
+   Home-only pieces (court, scoreboard) are scoped to .home-px.
+   Pixelify Sans for headlines, numbers and small labels,
+   Manrope stays for body copy so it remains easy to read.
+   ===================================================================== */
+.px-ui {
+  --px-line: var(--deep);     /* pixel borders */
+  --px-shadow: var(--deep);   /* hard drop shadows on light surfaces */
+  --px-font: "Pixelify Sans", "Plus Jakarta Sans", sans-serif;
+  --px-label: "Pixelify Sans", "Plus Jakarta Sans", sans-serif; /* vector pixel font: crisp at any size (a bitmap font smears off its 8px grid) */
+  --px-ink: #1E1527;          /* hard pixel shadows */
+  --px-u: 4px;                /* one "pixel" of UI chrome */
+}
+/* Pixelify Sans has no "fi"/"fl" ligature glyphs; ligatures would render as a broken "A". */
+.px-ui { font-variant-ligatures: none; font-feature-settings: "liga" 0; }
+
+/* ---------- Hero bands (home hero + every page hero + CTA band) ---------- */
+.px-ui .hero-band, .px-ui .page-hero, .px-ui .cta-band {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(180deg, var(--deep-2) 0%, var(--deep) 60%, #4A3459 100%);
+}
+.px-hero { padding: 72px 0 136px; }
+.px-ui .hero-band::before, .px-ui .page-hero::before, .px-ui .cta-band::before { display: none; } /* drop the soft court lines; the grid replaces them */
+/* Stepped pixel edge where the hero meets the page */
+.px-ui .hero-band::after, .px-ui .page-hero::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 32px; pointer-events: none;
+  background:
+    linear-gradient(var(--bg), var(--bg)) 0 100% / 100% 16px no-repeat,
+    conic-gradient(var(--bg) 25%, transparent 0 50%, var(--bg) 0 75%, transparent 0) 0 0 / 32px 32px repeat-x;
+}
+
+.px-stars { position: absolute; inset: 0; pointer-events: none; }
+.px-star {
+  position: absolute; width: 4px; height: 4px; background: #fff; opacity: 0.2;
+  animation: px-twinkle 2.4s steps(2, jump-none) infinite;
+}
+.px-star[style*="--s:1"] { width: 6px; height: 6px; background: var(--accent); }
+.px-star[style*="--s:2"] { background: var(--primary); }
+@keyframes px-twinkle { 50% { opacity: 0.9; } }
+
+.px-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  font-family: var(--px-label); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent);
+}
+.px-blink { width: 10px; height: 10px; background: var(--accent); animation: px-blink 1s steps(1, end) infinite; }
+@keyframes px-blink { 50% { opacity: 0; } }
+
+.px-ui .hero-band h1, .px-ui .page-hero h1 {
+  font-family: var(--px-font); font-weight: 700; letter-spacing: 0;
+  font-size: clamp(2.4rem, 5.6vw, 4.1rem); line-height: 1.05;
+  text-shadow: var(--px-u) var(--px-u) 0 var(--px-ink);
+  margin-bottom: 36px;
+}
+.px-ui .page-hero h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); margin-bottom: 0; }
+.px-ui .page-hero .eyebrow {
+  font-family: var(--px-label); font-weight: 400; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.px-ui .hero-band h1 .accent { color: var(--accent); }
+/* Words drop in on a stepped beat instead of the blur-rise used elsewhere */
+.px-ui h1[data-split] .w {
+  filter: none; transform: translateY(0.4em);
+  animation: px-word 0.36s steps(3, end) forwards;
+  animation-delay: calc(var(--w) * 90ms + 0.1s);
+}
+@keyframes px-word { to { opacity: 1; transform: none; } }
+
+/* ---------- Pixel buttons: square, hard shadow, press-down ---------- */
+.px-ui .btn {
+  border-radius: 0; font-family: var(--px-label); font-weight: 700; font-size: 0.82rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  box-shadow: var(--px-u) var(--px-u) 0 var(--px-ink);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end), background 0.12s steps(1, end);
+}
+.px-ui .btn-outline-light { border: 2px solid #fff; box-shadow: var(--px-u) var(--px-u) 0 var(--px-ink); }
+.px-ui .btn-ghost { border: 2px solid var(--px-line); box-shadow: 3px 3px 0 var(--px-shadow); }
+.px-ui .btn-primary { box-shadow: var(--px-u) var(--px-u) 0 var(--deep-2); }
+@media (hover: hover) {
+  .px-ui .btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--px-u) + 2px) calc(var(--px-u) + 2px) 0 var(--px-ink);
+  }
+  .px-ui .btn-ghost:hover { box-shadow: 5px 5px 0 var(--px-shadow); }
+}
+.px-ui .btn:active:not(:disabled) { transform: translate(var(--px-u), var(--px-u)); box-shadow: 0 0 0 var(--px-ink); }
+
+/* ---------- Pixel-art rally ---------- */
+.px-court {
+  display: block; width: 100%; max-width: 480px; height: auto; margin-left: auto;
+  image-rendering: pixelated;
+}
+.px-court .pc-floor { fill: #5C4369; }
+.px-court .pc-kitchen { fill: #6F527F; }
+.px-court .pc-line { fill: #F3EDF7; }
+.px-court .pc-net { fill: rgba(243, 237, 247, 0.55); }
+.px-court .pc-post { fill: var(--deep-2); }
+.px-court .pc-drop { fill: #1A1222; }
+.px-court .pc-gold { fill: var(--accent); }
+.px-court .pc-gold-d { fill: var(--gold); }
+.px-court .pc-shine { fill: #FFFFFF; }
+.px-court .pc-paddle-a { fill: var(--primary); }
+.px-court .pc-paddle-b { fill: #F3EDF7; }
+.px-court .pc-handle { fill: var(--deep-2); }
+
+/* One rally = 2.4s: left hits, ball arcs to the right, right returns. */
+.px-court .pc-ball { animation: pc-ball 2.4s infinite; }
+.px-court .pc-shadow { animation: pc-shadow 2.4s infinite; }
+@keyframes pc-ball {
+  0%   { transform: translate(0, 0);        animation-timing-function: steps(7, end); }
+  25%  { transform: translate(29px, -13px); animation-timing-function: steps(7, end); }
+  50%  { transform: translate(59px, 4px);   animation-timing-function: steps(7, end); }
+  75%  { transform: translate(29px, -14px); animation-timing-function: steps(7, end); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes pc-shadow {
+  0%   { transform: translate(0, 0);       animation-timing-function: steps(7, end); }
+  25%  { transform: translate(29px, -1px); animation-timing-function: steps(7, end); }
+  50%  { transform: translate(59px, 4px);  animation-timing-function: steps(7, end); }
+  75%  { transform: translate(29px, -1px); animation-timing-function: steps(7, end); }
+  100% { transform: translate(0, 0); }
+}
+.px-court .pc-right { animation: pc-right 2.4s steps(2, end) infinite; }
+.px-court .pc-left { animation: pc-left 2.4s steps(2, end) infinite; }
+@keyframes pc-right { 0%, 30%, 70%, 100% { transform: translate(0, 0); } 42%, 56% { transform: translate(-1px, 4px); } }
+@keyframes pc-left { 0%, 6%, 94%, 100% { transform: translate(1px, 0); } 20%, 80% { transform: translate(0, -3px); } }
+.px-court .pc-spark { opacity: 0; }
+.px-court .pc-spark-l { animation: pc-spark-l 2.4s steps(1, end) infinite; }
+.px-court .pc-spark-r { animation: pc-spark-r 2.4s steps(1, end) infinite; }
+@keyframes pc-spark-l { 0%, 6% { opacity: 1; } 7%, 100% { opacity: 0; } }
+@keyframes pc-spark-r { 0%, 49% { opacity: 0; } 50%, 56% { opacity: 1; } 57%, 100% { opacity: 0; } }
+.px-court .pc-trophy { animation: pc-bob 1.6s steps(1, end) infinite; }
+@keyframes pc-bob { 50% { transform: translateY(-1px); } }
+
+/* ---------- Scoreboard stats ---------- */
+.px-scoreboard { gap: 16px; }
+.home-px .stat {
+  background: var(--deep-2); color: #fff;
+  border: 3px solid var(--px-ink); border-radius: 0;
+  box-shadow: inset 0 0 0 3px #4A3459, 6px 6px 0 var(--px-ink);
+  padding: 20px; gap: 14px;
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end);
+}
+.home-px .stat::after { /* segmented "LED" bar along the bottom */
+  height: 6px; bottom: 6px; left: 6px; right: 6px;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 8px, transparent 8px 12px);
+  transition: transform 0.3s steps(6, end);
+}
+@media (hover: hover) {
+  .home-px .stat:hover { transform: translate(-2px, -2px); box-shadow: inset 0 0 0 3px #4A3459, 8px 8px 0 var(--px-ink); }
+}
+.home-px .stat-icon { border-radius: 0; width: 46px; height: 46px; box-shadow: 3px 3px 0 var(--px-ink); }
+.home-px .stat-value {
+  font-family: var(--px-font); font-weight: 700; font-size: 2.4rem; color: var(--accent);
+  text-shadow: 0 0 12px rgba(247, 215, 116, 0.35);
+}
+.home-px .stat.is-counting .stat-value { color: #fff; }
+.home-px .stat-label {
+  font-family: var(--px-label); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: rgba(255, 255, 255, 0.7);
+}
+.home-px .stat-total .stat-icon { background: var(--primary); color: var(--deep-2); }
+/* Spotlight hover from the base styles assumes a light card; switch it off here. */
+@media (hover: hover) { .home-px .stat:hover { background-image: none; } }
+
+/* ---------- Tournament list ---------- */
+.px-ui .list-head h2 { font-family: var(--px-font); font-weight: 700; font-size: clamp(1.6rem, 3.4vw, 2.2rem); letter-spacing: 0; }
+.px-ui .list-head h2 mark.hl {
+  background-image: linear-gradient(transparent 55%, var(--accent) 55%, var(--accent) 90%, transparent 90%);
+  border-radius: 0;
+}
+.px-ui .t-rows { gap: 20px; }
+.px-ui .t-row {
+  border-radius: 0; border: 3px solid var(--px-line); border-left-width: 3px;
+  box-shadow: 6px 6px 0 var(--px-shadow);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end), background 0.12s steps(1, end);
+}
+@media (hover: hover) {
+  .px-ui .t-row:hover {
+    transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--plum);
+    border-color: var(--px-line); background-image: none; background-color: var(--lav-25);
+  }
+}
+.px-ui .t-row:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--px-shadow); }
+.px-ui .t-row-num {
+  font-family: var(--px-label); font-weight: 700; font-size: 1.9rem; color: var(--primary);
+  text-shadow: 3px 3px 0 var(--lav-100);
+}
+.px-ui .t-row:hover .t-row-num { color: var(--plum); }
+.px-ui .t-row-info h3 { font-family: var(--px-font); font-weight: 600; font-size: 1.35rem; letter-spacing: 0; }
+.px-ui .t-row .tag, .px-ui .t-row .badge { border-radius: 0; }
+.px-ui .t-row-side strong { font-family: var(--px-font); font-weight: 600; font-size: 1.05rem; }
+.px-ui .t-row-go { font-family: var(--px-label); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
+/* Block-segmented progress bar */
+.px-ui .t-row .progress { border-radius: 0; height: 10px; background: var(--lav-100); box-shadow: inset 0 0 0 2px var(--px-line); }
+.px-ui .t-row .progress span {
+  border-radius: 0;
+  background: repeating-linear-gradient(90deg, var(--plum) 0 6px, transparent 6px 8px);
+  margin: 2px; height: calc(100% - 4px);
+}
+.px-ui .card { border-radius: 0; border: 3px solid var(--px-line); box-shadow: 6px 6px 0 var(--px-shadow); }
+
+/* ---------- Responsive ---------- */
+/* The base styles hide the hero art at ≤1024px; the court is small enough to keep. */
+@media (max-width: 1024px) {
+  .px-hero .hero-visual { display: block; width: 100%; max-width: 400px; }
+  .px-court { margin: 8px 0 0; }
+}
+@media (max-width: 480px) {
+  .px-hero .hero-visual { max-width: 300px; }
+}
+@media (max-width: 760px) {
+  .px-hero { padding: 44px 0 112px; }
+  .px-ui .hero-band h1, .px-ui .page-hero h1 { text-shadow: 3px 3px 0 var(--px-ink); margin-bottom: 28px; }
+  .home-px .stat { padding: 14px; box-shadow: inset 0 0 0 3px #4A3459, 4px 4px 0 var(--px-ink); }
+  .home-px .stat-value { font-size: 1.8rem; }
+  .px-ui .t-row { box-shadow: 4px 4px 0 var(--px-shadow); }
+}
+
+/* =====================================================================
+   App-wide pixel chrome
+   ===================================================================== */
+
+/* Square everything and swap soft shadows for hard pixel offsets. The tokens
+   cover most components; the !important radius catches hard-coded pills. */
+.px-ui {
+  --r-xl: 0; --r-lg: 0; --r-md: 0; --r-sm: 0;
+  --shadow-sm: 3px 3px 0 rgba(30, 21, 39, 0.9);
+  --shadow-md: 5px 5px 0 var(--px-ink);
+  --shadow-lg: 8px 8px 0 var(--px-ink);
+  --focus: 0 0 0 3px var(--accent), 3px 3px 0 3px var(--px-ink);
+  --font-head: var(--px-font);
+}
+.px-ui *, .px-ui *::before, .px-ui *::after { border-radius: 0 !important; }
+.px-ui h1, .px-ui h2, .px-ui h3, .px-ui h4 { letter-spacing: 0; }
+
+/* Pixel dust on page heroes: the soft orbs become tiny squares (one element,
+   many pixels via box-shadow) that twinkle on a stepped beat. */
+.px-ui .orb { filter: none; width: 4px; height: 4px; background: #fff; opacity: 0.6; animation: px-twinkle 2.4s steps(2, jump-none) infinite; }
+.px-ui .orb-1 { right: 18%; bottom: auto; top: 26%; box-shadow: -120px 40px 0 var(--accent), 60px 70px 0 rgba(255, 255, 255, 0.7), -260px -10px 0 var(--primary), 140px -30px 0 #fff; }
+.px-ui .orb-2 { left: 52%; top: 18%; background: var(--primary); box-shadow: 90px 90px 0 #fff, -200px 60px 0 var(--accent), 220px 20px 0 var(--primary); animation-delay: -1.2s; }
+.px-ui .orb-3 { right: 6%; top: 62%; background: var(--accent); width: 6px; height: 6px; animation-delay: -0.6s; }
+
+/* Header: solid pixel rule instead of a glassy blur line */
+.px-ui .app-header { border-bottom: 3px solid var(--px-line); background: rgba(247, 244, 250, 0.96); }
+.px-ui .app-header.is-scrolled { box-shadow: 0 3px 0 rgba(59, 42, 71, 0.15); }
+.px-ui .brand-mark { box-shadow: 3px 3px 0 var(--px-shadow); border: 2px solid var(--px-line); }
+.px-ui .brand-tagline, .px-ui .nav-link, .px-ui .sponsor-label {
+  font-family: var(--px-label); font-weight: 400; letter-spacing: 0.04em;
+}
+.px-ui .nav-link { font-size: 0.78rem; text-transform: uppercase; transition: background 0.12s steps(1, end), color 0.12s steps(1, end), transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end); }
+.px-ui .sponsor { border: 2px solid var(--px-line); box-shadow: 3px 3px 0 var(--px-shadow); }
+
+/* Cards and panels */
+.px-ui .card { border: 3px solid var(--px-line); box-shadow: 6px 6px 0 var(--px-shadow); }
+.px-ui .t-card { transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end); }
+.px-ui .t-card::before { height: 6px; background: repeating-linear-gradient(90deg, var(--plum) 0 8px, var(--accent) 8px 16px); transition: transform 0.3s steps(6, end); }
+@media (hover: hover) { .px-ui .t-card:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0 var(--plum); } }
+.px-ui .t-card-title, .px-ui .section-title, .px-ui .card-head h2 { font-weight: 600; }
+.px-ui .modal { border: 3px solid var(--px-line); }
+.px-ui .modal-backdrop { background: rgba(30, 21, 39, 0.6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.px-ui .toast { border: 2px solid var(--px-ink); box-shadow: 4px 4px 0 var(--px-ink); font-family: var(--font); }
+.px-ui .notice { border-width: 2px; }
+
+/* Small labels in the bitmap font */
+.px-ui .eyebrow, .px-ui .badge, .px-ui .tag, .px-ui .chip, .px-ui .tab, .px-ui .round-tab,
+.px-ui .match-status, .px-ui .round-meta, .px-ui .field-label, .px-ui .stat-label, .px-ui .bracket-tag,
+.px-ui .champ-card-label, .px-ui .site-footer h4 {
+  font-family: var(--px-label); font-weight: 400; letter-spacing: 0.04em;
+}
+.px-ui .tab, .px-ui .chip, .px-ui .round-tab { text-transform: uppercase; font-size: 0.76rem; }
+.px-ui .tab.is-active { box-shadow: 3px 3px 0 var(--px-ink); }
+.px-ui .badge, .px-ui .tag { font-size: 0.66rem; }
+
+/* Form controls: thick square borders, stepped focus */
+.px-ui .input, .px-ui .select, .px-ui .textarea, .px-ui .score-input, .px-ui .inline-input { border: 2px solid var(--px-line); box-shadow: inset 3px 3px 0 var(--lav-50); }
+.px-ui .input:focus, .px-ui .select:focus, .px-ui .textarea:focus, .px-ui .score-input:focus { box-shadow: var(--focus); }
+.px-ui .choice-card { border-width: 2px; }
+.px-ui .choice input:checked + .choice-card { box-shadow: 4px 4px 0 var(--plum); }
+
+/* Bracket: square match cards with hard shadows, stepped lift */
+.px-ui .match { border-width: 2px; transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end), border-color 0.12s steps(1, end); }
+.px-ui .team-score, .px-ui .score-side-name, .px-ui .match-title, .px-ui .round-name, .px-ui .champ-card-name { font-family: var(--px-font); }
+.px-ui .team-score { font-weight: 700; font-size: 0.95rem; }
+.px-ui .round-head { border-width: 2px; }
+.px-ui .champ-card { border-width: 3px; box-shadow: 5px 5px 0 var(--gold); }
+.px-ui .progress { height: 10px; background: var(--lav-100); box-shadow: inset 0 0 0 2px var(--px-line); }
+.px-ui .progress span { background: repeating-linear-gradient(90deg, var(--plum) 0 6px, transparent 6px 8px); margin: 2px; height: calc(100% - 4px); }
+
+/* =====================================================================
+   Footer
+   ===================================================================== */
+.px-ui .site-footer {
+  position: relative; padding: 0 0 24px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(180deg, var(--deep) 0%, var(--deep-2) 100%);
+}
+/* Stepped top edge, in the ticker's gold so the two read as one band */
+.px-ui .site-footer::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; pointer-events: none;
+  background: conic-gradient(var(--accent) 25%, transparent 0 50%, var(--accent) 0 75%, transparent 0) 0 0 / 32px 32px repeat-x;
+}
+
+/* Scoreboard ticker */
+.footer-ticker { overflow: hidden; background: var(--accent); border-bottom: 3px solid var(--px-ink, #1E1527); }
+.footer-ticker-track { display: flex; width: max-content; animation: ticker 26s linear infinite; }
+.footer-ticker span {
+  display: inline-flex; align-items: center; gap: 22px; padding: 10px 0 10px 22px;
+  font-family: var(--px-label); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--deep-2);
+}
+.footer-ticker span::after { content: ""; width: 8px; height: 8px; background: var(--plum); }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* Sister site feature card */
+.sister-card {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 24px;
+  margin: 48px 0 44px; padding: 22px 26px;
+  background: #4A3459; color: #fff; text-decoration: none;
+  border: 3px solid var(--px-ink); box-shadow: 8px 8px 0 var(--accent);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end);
+}
+@media (hover: hover) {
+  .sister-card:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--accent); }
+  .sister-card:hover .sister-btn { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--px-ink); }
+}
+.sister-card:active { transform: translate(4px, 4px); box-shadow: 4px 4px 0 var(--accent); }
+.sister-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+/* Four pixel players waiting in a queue, hopping in turn */
+.sister-art { display: flex; align-items: flex-end; gap: 6px; height: 48px; padding: 0 4px; }
+.sister-art span { width: 14px; height: 22px; background: var(--primary); box-shadow: 0 -8px 0 -2px #F3EDF7; animation: queue-hop 1.6s steps(1, end) infinite; }
+.sister-art span:nth-child(1) { background: var(--accent); animation-delay: 0s; }
+.sister-art span:nth-child(2) { animation-delay: 0.4s; }
+.sister-art span:nth-child(3) { animation-delay: 0.8s; background: #C3AED3; }
+.sister-art span:nth-child(4) { animation-delay: 1.2s; }
+@keyframes queue-hop { 0%, 20% { transform: translateY(-6px); } 25%, 100% { transform: none; } }
+.sister-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sister-title { font-family: var(--px-font); font-weight: 700; font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.15; text-shadow: 3px 3px 0 var(--px-ink); }
+.sister-sub { color: rgba(255, 255, 255, 0.75); font-size: 0.92rem; }
+.sister-btn { white-space: nowrap; pointer-events: none; }
+
+/* Columns */
+.px-ui .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+.footer-logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+.footer-mark { width: 44px; height: 44px; padding: 4px; background: #F3EDF7; border: 2px solid var(--px-ink); box-shadow: 3px 3px 0 var(--accent); flex: none; }
+.px-ui .footer-brand .brand-title { font-size: 1.3rem; }
+.px-ui .footer-brand p { margin-top: 14px; }
+.px-ui .site-footer h4 { text-transform: uppercase; font-size: 0.8rem; color: var(--accent); margin-bottom: 16px; }
+.px-ui .site-footer li a { display: inline-flex; align-items: center; gap: 8px; }
+.px-ui .site-footer li a::before { content: ""; width: 6px; height: 6px; background: var(--primary); transition: background 0.12s steps(1, end); }
+.px-ui .site-footer li a:hover { padding-left: 0; }
+.px-ui .site-footer li a:hover::before { background: var(--accent); }
+.site-footer .ext { font-size: 0.8em; }
+.px-ui .footer-sponsor img { border: 2px solid var(--px-ink); box-shadow: 4px 4px 0 var(--accent); transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end); }
+.px-ui .footer-sponsor:hover img { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--accent); }
+
+/* Bottom bar */
+.px-ui .footer-bottom { border-top: 3px dashed rgba(255, 255, 255, 0.14); align-items: center; }
+.footer-top {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer;
+  background: transparent; color: rgba(255, 255, 255, 0.75); border: 2px solid rgba(255, 255, 255, 0.3);
+  font-family: var(--px-label); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: color 0.12s steps(1, end), border-color 0.12s steps(1, end), transform 0.12s steps(2, end);
+}
+.footer-top:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+.footer-top:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 1024px) {
+  .px-ui .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .sister-card { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 20px; margin: 36px 0 36px; box-shadow: 6px 6px 0 var(--accent); }
+  .sister-btn { justify-self: start; }
+  .px-ui .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+
+/* ---------- Reduced motion: hold a clean still frame ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .px-star, .px-blink, .px-ui .orb, .footer-ticker-track, .sister-art span { animation: none; }
+  .px-ui h1[data-split] .w { opacity: 1; transform: none; }
+  .px-court .pc-spark { opacity: 0; }
+}
+
+/* Footer sponsor: one horizontal badge matching the header's
+   ("SPONSORED BY" + logo in a white box, square border, hard shadow). */
+.px-ui .footer-sponsor {
+  flex-direction: row; align-items: center; gap: 12px;
+  background: #fff; padding: 6px 14px 6px 16px;
+  border: 2px solid var(--px-ink); box-shadow: 4px 4px 0 var(--accent);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end);
+}
+.px-ui .footer-sponsor .footer-sponsor-label {
+  font-family: var(--px-label); font-weight: 400; font-size: 0.7rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-2); white-space: nowrap;
+}
+.px-ui .footer-sponsor img { height: 48px; width: auto; padding: 0; background: none; border: 0; box-shadow: none; }
+.px-ui .footer-sponsor:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--accent); }
+.px-ui .footer-sponsor:hover img { transform: none; box-shadow: none; }
+.px-ui .footer-sponsor:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* =====================================================================
+   Theme toggle (header) — same pixel sun/moon button as the open-play site
+   ===================================================================== */
+.theme-toggle {
+  flex: none; margin-left: 8px;
+  display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; cursor: pointer;
+  background: var(--white); color: var(--heading);
+  border: 2px solid var(--px-line); box-shadow: 3px 3px 0 var(--px-shadow);
+  transition: transform 0.12s steps(2, end), box-shadow 0.12s steps(2, end);
+}
+.theme-toggle svg { width: 22px; height: 22px; display: block; }
+.theme-toggle .tt-moon { display: none; }
+html[data-theme="dark"] .theme-toggle { background: #2C2137; color: var(--accent); }
+html[data-theme="dark"] .theme-toggle .tt-sun { display: none; }
+html[data-theme="dark"] .theme-toggle .tt-moon { display: block; }
+@media (hover: hover) { .theme-toggle:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--px-shadow); } }
+.theme-toggle:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--px-shadow); }
+.theme-toggle:focus-visible { outline: none; box-shadow: var(--focus); }
+/* Header order: brand · nav · toggle · sponsor (· hamburger on small screens) */
+.header-inner > .theme-toggle + .sponsor { margin-left: 12px; }
+@media (max-width: 900px) {
+  .header-inner > .theme-toggle { margin-left: auto; width: 40px; height: 40px; }
+  .header-inner > .theme-toggle + .sponsor { margin-left: 10px; }
+}
+@media (max-width: 480px) {
+  .header-inner > .theme-toggle { width: 36px; height: 36px; }
+  .header-inner > .theme-toggle + .sponsor { margin-left: 8px; }
+}
+
+/* =====================================================================
+   Dark mode — html[data-theme="dark"], set before first paint by the
+   script in <head> (follows the device setting until the toggle is used)
+   ===================================================================== */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --white: #261C30;          /* cards and panels */
+  --lav-25: #2C2137;
+  --lav-50: #1E1626;
+  --lav-100: #3A2C47;
+  --bg: #1A1321;
+  --text: #EEE7F3;
+  --text-2: #B7AAC2;
+  --border: #3A2E46;
+  --border-strong: #4D3D5B;
+  --primary-strong: #C3AED3;
+  --plum: #A88BC0;           /* lighter so plum text and links stay readable */
+  --plum-hover: #BFA6D4;
+  --heading: #F3EDF7;
+  --success-bg: #1E3829;  --success-fg: #8FD9AE;  --success-line: #2F5C43;
+  --warning-bg: #3A2F18;  --warning-fg: #F2D58C;  --warning-line: #6B5420;
+  --error-bg: #3D1E26;    --error-fg: #F2A3B0;    --error-line: #6E2E3B;
+  --info-bg: #34263F;     --info-fg: #D5C2E4;
+  --neutral-bg: #2E2538;  --neutral-fg: #C2B6CC;
+  --focus: 0 0 0 3px var(--accent), 3px 3px 0 3px #000;
+  --px-line: #5E4A6E;
+  --px-shadow: #0B070F;
+  --px-ink: #0B070F;
+}
+html[data-theme="dark"] body { background: var(--bg); color: var(--text); }
+html[data-theme="dark"].px-ui .app-header { background: rgba(30, 22, 38, 0.97); border-bottom-color: var(--px-line); }
+html[data-theme="dark"] .nav-link.is-active { background: #F3EDF7; color: #1A1321; }
+html[data-theme="dark"] .nav-toggle span { background: var(--heading); }
+/* The logo artwork and sponsor logo are drawn for light tiles: keep those light */
+html[data-theme="dark"] .brand-mark, html[data-theme="dark"] .footer-mark { background: #F3EDF7; }
+html[data-theme="dark"] .sponsor, html[data-theme="dark"] .footer-sponsor { background: #fff; }
+html[data-theme="dark"] .sponsor-label, html[data-theme="dark"] .footer-sponsor .footer-sponsor-label { color: #6E6278; }
+/* Filled buttons: the lighter plum needs dark text */
+html[data-theme="dark"] .btn-primary { color: #1A1321; box-shadow: 4px 4px 0 var(--px-shadow); }
+html[data-theme="dark"] .btn-accent { color: #2C1F36; }
+html[data-theme="dark"] .btn-dark, html[data-theme="dark"] .tab.is-active,
+html[data-theme="dark"] .chip.is-active { background: #F3EDF7; border-color: #F3EDF7; color: #1A1321; }
+html[data-theme="dark"] .stat-total .stat-icon,
+html[data-theme="dark"] .choice input:checked + .choice-card .choice-icon { background: var(--primary); color: #1A1321; }
+/* Hero bands and footer sit a step darker than the page */
+html[data-theme="dark"].px-ui .hero-band, html[data-theme="dark"].px-ui .page-hero, html[data-theme="dark"].px-ui .cta-band {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(180deg, #120D17 0%, #221829 60%, #2E2238 100%);
+}
+html[data-theme="dark"].px-ui .site-footer {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(180deg, #150F1B 0%, #0F0B13 100%);
+}
+html[data-theme="dark"] .sister-card { background: #2C2137; }
+/* Highlighter band stays readable under light text */
+html[data-theme="dark"] mark.hl { background-image: linear-gradient(transparent 60%, rgba(247, 215, 116, 0.4) 60%, rgba(247, 215, 116, 0.4) 92%, transparent 92%); }
+html[data-theme="dark"] .home-px .list-head h2 mark.hl { background-image: linear-gradient(transparent 55%, #6B5420 55%, #6B5420 90%, transparent 90%); }
+/* Hard-coded light surfaces in the base styles */
+html[data-theme="dark"] .input.is-invalid, html[data-theme="dark"] .textarea.is-invalid,
+html[data-theme="dark"] .inline-input.is-invalid { background: #33202A; }
+html[data-theme="dark"] .notice-warning { background: var(--warning-bg); }
+html[data-theme="dark"] .t-champ { background: #3F3420; color: #F2D58C; }
+html[data-theme="dark"] .legend-swatch { background: var(--lav-25); }
+html[data-theme="dark"] .match.status-pending { background: var(--lav-25); }
+html[data-theme="dark"] .score-side.is-leading { background: var(--lav-25); }
+html[data-theme="dark"] .stepper button, html[data-theme="dark"] .score-input { background: var(--lav-25); color: var(--heading); }
+html[data-theme="dark"] .modal-foot { background: var(--lav-50); }
+html[data-theme="dark"] .switch::after { background: #F3EDF7; }
+html[data-theme="dark"] .tag-l { background: #3F3420; color: #F2D58C; }
+html[data-theme="dark"] .de-section[aria-label="Losers Bracket"] .round-head { background: #3F3420; border-color: #6B5420; }
+html[data-theme="dark"] .toast { background: #F3EDF7; color: #1A1321; border-color: #000; }
+html[data-theme="dark"] .modal-backdrop { background: rgba(0, 0, 0, 0.65); }
+html[data-theme="dark"] .t-row-num { text-shadow: 3px 3px 0 #0B070F; }
+
+/* The wide bitmap caps can outgrow narrow buttons: wrap instead of clipping. */
+.px-ui .btn { white-space: normal; text-align: center; line-height: 1.35; padding-top: 8px; padding-bottom: 8px; }
+
+/* =====================================================================
+   Date picker (pixel calendar replacing the browser's date pop-up)
+   ===================================================================== */
+.date-anchor { position: relative; }
+.date-btn {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  text-align: left; cursor: pointer; font: inherit; font-weight: 600; color: var(--text);
+}
+.date-btn-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.date-btn-icon { display: inline-grid; place-items: center; color: var(--plum); }
+.date-btn-icon .icon { width: 20px; height: 20px; }
+.date-btn[aria-expanded="true"] { border-color: var(--plum); box-shadow: var(--focus); }
+
+.dp-pop {
+  position: absolute; left: 0; top: calc(100% + 8px); z-index: 60;
+  width: 312px; max-width: calc(100vw - 32px); padding: 12px;
+  background: var(--white); color: var(--text);
+  border: 3px solid var(--px-line, var(--deep)); box-shadow: 6px 6px 0 var(--px-shadow, var(--deep));
+  animation: dp-in 0.16s steps(3, end) both;
+}
+.is-up .dp-pop { top: auto; bottom: calc(100% + 8px); }
+@keyframes dp-in { from { opacity: 0; transform: translateY(-6px); } }
+
+.dp-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.dp-title { font-family: var(--px-font, var(--font-head)); font-weight: 700; font-size: 1.08rem; color: var(--heading); }
+.dp-nav {
+  display: inline-grid; place-items: center; width: 34px; height: 34px; padding: 0; cursor: pointer;
+  background: var(--lav-25); color: var(--heading);
+  border: 2px solid var(--px-line, var(--deep)); box-shadow: 2px 2px 0 var(--px-shadow, var(--deep));
+  transition: transform 0.1s steps(2, end), box-shadow 0.1s steps(2, end);
+}
+.dp-nav .icon { width: 16px; height: 16px; }
+@media (hover: hover) { .dp-nav:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--px-shadow, var(--deep)); } }
+.dp-nav:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--px-shadow, var(--deep)); }
+
+.dp-grid { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+.dp-grid th {
+  padding: 2px 0 4px; font-family: var(--px-label, var(--font)); font-size: 0.68rem; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-2); text-align: center;
+}
+.dp-grid td { padding: 0; }
+.dp-day {
+  display: grid; place-items: center; width: 100%; aspect-ratio: 1; padding: 0; cursor: pointer;
+  background: transparent; color: var(--text); border: 2px solid transparent;
+  font-family: var(--px-font, var(--font-head)); font-weight: 600; font-size: 0.95rem; font-variant-numeric: tabular-nums;
+  transition: background 0.1s steps(1, end), border-color 0.1s steps(1, end);
+}
+@media (hover: hover) { .dp-day:hover { background: var(--lav-50); border-color: var(--px-line, var(--deep)); } }
+.dp-day.is-out { color: var(--text-2); opacity: 0.45; }
+.dp-day.is-today { border: 2px dashed var(--plum); }
+.dp-day.is-selected {
+  background: var(--accent); color: #2C1F36; opacity: 1;
+  border: 2px solid var(--px-ink, #1E1527); box-shadow: 2px 2px 0 var(--px-shadow, var(--deep));
+}
+.dp-day:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; position: relative; z-index: 1; }
+.dp-day.is-selected:focus-visible { outline-color: var(--plum); }
+
+.dp-foot { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 2px dashed var(--border); }
+.dp-link {
+  padding: 6px 6px; background: none; border: 0; cursor: pointer;
+  font-family: var(--px-label, var(--font)); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--plum);
+}
+.dp-link:hover { color: var(--heading); }
+.dp-link:focus-visible, .dp-nav:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 480px) { .dp-pop { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .dp-pop { animation: none; } }
+/* Date numbers: the pixel font's bold digits blur (2/0 look like 8), so numbers use the
+   plain UI font; the pixel cells, borders and month name keep the theme. */
+.dp-day { font-family: var(--font); font-weight: 700; font-size: 0.92rem; }
+.dp-year { font-family: var(--font); font-weight: 800; font-size: 0.95em; margin-left: 4px; }
+
+/* Phones: the wide pixel labels pushed some list filters off-screen in a swipe row;
+   wrap them so every filter is visible. */
+@media (max-width: 600px) {
+  .chips { flex-wrap: wrap; overflow: visible; }
+}
