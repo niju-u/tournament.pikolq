@@ -91,8 +91,6 @@
   const html = document.documentElement;
   const themeBtn = document.querySelector('[data-theme-toggle]');
   const themeMeta = document.querySelector('meta[name="theme-color"]');
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
-  const savedTheme = () => { try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; } };
   function applyTheme(theme) {
     const dark = theme === 'dark';
     html.setAttribute('data-theme', theme);
@@ -110,8 +108,6 @@
       try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* private mode: lasts this visit */ }
     });
   }
-  // Follow the device setting until the person picks a theme themselves.
-  systemDark.addEventListener('change', (e) => { if (!savedTheme()) applyTheme(e.matches ? 'dark' : 'light'); });
 
   // Footer: current year and back-to-top.
   U.$$('[data-year]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
