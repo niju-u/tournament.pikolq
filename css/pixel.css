@@ -307,7 +307,7 @@
 
 /* Scoreboard ticker */
 .footer-ticker { overflow: hidden; background: var(--accent); border-bottom: 3px solid var(--px-ink, #1E1527); }
-.footer-ticker-track { display: flex; width: max-content; animation: ticker 26s linear infinite; }
+.footer-ticker-track { display: flex; width: max-content; animation: ticker 156s linear infinite; }
 .footer-ticker span {
   display: inline-flex; align-items: center; gap: 22px; padding: 10px 0 10px 22px;
   font-family: var(--px-label); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--deep-2);
@@ -485,13 +485,29 @@ html[data-theme="dark"].px-ui .site-footer {
   background:
     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px) 0 0 / 16px 16px,
-    linear-gradient(180deg, #150F1B 0%, #0F0B13 100%);
+    linear-gradient(180deg, #3B2A47 0%, #2C1F36 100%); /* same as pikolq.run.place dark footer */
 }
 html[data-theme="dark"] .sister-card { background: #2C2137; }
 /* Highlighter band stays readable under light text */
 html[data-theme="dark"] mark.hl { background-image: linear-gradient(transparent 60%, rgba(247, 215, 116, 0.4) 60%, rgba(247, 215, 116, 0.4) 92%, transparent 92%); }
 html[data-theme="dark"] .home-px .list-head h2 mark.hl { background-image: linear-gradient(transparent 55%, #6B5420 55%, #6B5420 90%, transparent 90%); }
 /* Hard-coded light surfaces in the base styles */
+/* Dark textboxes — same as pikolq.run.place: near-black well, pixel border, inset step */
+html[data-theme="dark"] .input, html[data-theme="dark"] .select, html[data-theme="dark"] .textarea,
+html[data-theme="dark"] .score-input, html[data-theme="dark"] .inline-input,
+html[data-theme="dark"] .entrant:hover .inline-input, html[data-theme="dark"] .inline-input:hover {
+  background-color: #130D19; color: #EEE7F3; border-color: var(--px-line);
+  box-shadow: inset 3px 3px 0 #3A2C47;
+}
+html[data-theme="dark"] .input:focus, html[data-theme="dark"] .select:focus, html[data-theme="dark"] .textarea:focus,
+html[data-theme="dark"] .score-input:focus, html[data-theme="dark"] .inline-input:focus {
+  background-color: #0E0913; border-color: var(--px-line); box-shadow: var(--focus);
+}
+html[data-theme="dark"] .input::placeholder, html[data-theme="dark"] .textarea::placeholder,
+html[data-theme="dark"] .inline-input::placeholder { color: #7D6E8A; }
+html[data-theme="dark"] .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23B7AAC2' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
 html[data-theme="dark"] .input.is-invalid, html[data-theme="dark"] .textarea.is-invalid,
 html[data-theme="dark"] .inline-input.is-invalid { background: #33202A; }
 html[data-theme="dark"] .notice-warning { background: var(--warning-bg); }
@@ -499,7 +515,7 @@ html[data-theme="dark"] .t-champ { background: #3F3420; color: #F2D58C; }
 html[data-theme="dark"] .legend-swatch { background: var(--lav-25); }
 html[data-theme="dark"] .match.status-pending { background: var(--lav-25); }
 html[data-theme="dark"] .score-side.is-leading { background: var(--lav-25); }
-html[data-theme="dark"] .stepper button, html[data-theme="dark"] .score-input { background: var(--lav-25); color: var(--heading); }
+html[data-theme="dark"] .stepper button { background: var(--lav-25); color: var(--heading); }
 html[data-theme="dark"] .modal-foot { background: var(--lav-50); }
 html[data-theme="dark"] .switch::after { background: #F3EDF7; }
 html[data-theme="dark"] .tag-l { background: #3F3420; color: #F2D58C; }
