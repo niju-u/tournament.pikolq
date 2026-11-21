@@ -74,6 +74,8 @@
             </div>
             <div class="hero-visual">${pixelCourt()}</div>
           </div>
+          <!-- Pickle sa Balay's house, the pup playing fetch and a mini rally (js/scene.js) -->
+          <div class="container fetch-wrap"><div class="px-fetch" aria-hidden="true">${window.PxScene ? PxScene.html() : ''}</div></div>
         </section>
 
         <div class="container lift">
