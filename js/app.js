@@ -48,7 +48,36 @@
     if (e.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); toggle.focus(); }
   });
   window.addEventListener('resize', () => { if (window.innerWidth > 900) setMenu(false); });
-  window.addEventListener('scroll', () => header.classList.toggle('is-scrolled', window.scrollY > 8), { passive: true });
+  /* ---------- Header shrinks after scrolling (same as pikolq.run.place) ----------
+     The header is fixed; --header-h (the page's top spacer) always holds its FULL height,
+     so the page doesn't jump when it shrinks. */
+  const setHeaderSpace = px => document.documentElement.style.setProperty('--header-h', `${Math.ceil(px)}px`);
+  function syncHeaderSpace() {
+    if (!header.classList.contains('is-condensed')) { setHeaderSpace(header.offsetHeight); return; }
+    header.classList.add('is-measuring');
+    header.classList.remove('is-condensed');
+    const full = header.offsetHeight;
+    header.classList.add('is-condensed');
+    void header.offsetHeight; // re-apply the shrunk styles before turning transitions back on
+    header.classList.remove('is-measuring');
+    setHeaderSpace(full);
+  }
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => { if (!header.classList.contains('is-condensed')) setHeaderSpace(header.offsetHeight); }).observe(header);
+  }
+  window.addEventListener('resize', syncHeaderSpace, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderSpace);
+  const syncScroll = () => {
+    const y = window.scrollY;
+    const condensed = header.classList.contains('is-condensed');
+    // Shrink past 48px, grow back only near the very top (no flicker in between)
+    if (!condensed && y > 48) header.classList.add('is-condensed');
+    else if (condensed && y < 4) header.classList.remove('is-condensed');
+    header.classList.toggle('is-scrolled', y > 8);
+  };
+  window.addEventListener('scroll', syncScroll, { passive: true });
+  syncHeaderSpace();
+  syncScroll();
 
   function route() {
     const r = parse();
